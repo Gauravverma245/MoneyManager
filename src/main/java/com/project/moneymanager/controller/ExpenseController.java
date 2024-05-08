@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -40,6 +43,24 @@ public class ExpenseController {
     @PutMapping("/expenses/update/{id}")
     public Expense updateExpense(@RequestBody Expense expense, @PathVariable("id") Long id) throws Exception {
         return expenseService.updateExpenseDetails(id, expense);
+    }
+
+    @GetMapping("/expenses/category")
+    public List<Expense> getExpensesByCategory(@RequestParam("category") String category){
+        return expenseService.readByCategory(category);
+    }
+
+    @GetMapping("/expenses/name")
+    public List<Expense> getExpensesByName(@RequestParam("name") String name){
+        return expenseService.readByName(name);
+    }
+
+    @GetMapping("/expenses/date")
+    public List<Expense> getExpensesInBetweenDate(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date convertedStartDate = formatter.parse(startDate);
+        Date convertedEndDate = formatter.parse(endDate);
+        return expenseService.readByDateRange(convertedStartDate, convertedEndDate);
     }
 
 }
