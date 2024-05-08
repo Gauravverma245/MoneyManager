@@ -4,6 +4,7 @@ package com.project.moneymanager.controller;/*
 
 import com.project.moneymanager.model.Expense;
 import com.project.moneymanager.service.ExpenseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ExpenseController {
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/expenses/add")
-    public Expense addExpense(@RequestBody Expense expense){
+    public Expense addExpense(@Valid @RequestBody Expense expense){
         return expenseService.addExpense(expense);
     }
 
