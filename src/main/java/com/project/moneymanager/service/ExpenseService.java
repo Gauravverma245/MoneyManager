@@ -6,6 +6,7 @@ import com.project.moneymanager.model.Expense;
 import org.springframework.data.domain.Page;
 
 import java.awt.print.Pageable;
+import java.util.Date;
 import java.util.List;
 
 public interface ExpenseService {
@@ -14,4 +15,9 @@ public interface ExpenseService {
     void deleteExpenseById(Long id) throws Exception;
     Expense addExpense(Expense expense);
     Expense updateExpenseDetails(Long id, Expense expense) throws Exception;
+
+    List<Expense> readByCategory(String category);
+    List<Expense> readByName(String name);
+
+    List<Expense> readByDateRange(Date startDate, Date endDate);
 }

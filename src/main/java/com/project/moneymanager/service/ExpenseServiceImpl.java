@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,5 +51,20 @@ public class ExpenseServiceImpl implements ExpenseService{
         }else {
             throw new ResourceNotFoundException("No Expense exists with id: " + id);
         }
+    }
+
+    @Override
+    public List<Expense> readByCategory(String category) {
+        return expenseRepository.findByCategory(category);
+    }
+
+    @Override
+    public List<Expense> readByName(String name) {
+        return expenseRepository.findByNameContaining(name);
+    }
+
+    @Override
+    public List<Expense> readByDateRange(Date startDate, Date endDate) {
+        return expenseRepository.findByDateBetween(startDate, endDate);
     }
 }
