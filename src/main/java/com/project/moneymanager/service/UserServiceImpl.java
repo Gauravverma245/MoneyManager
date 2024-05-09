@@ -8,21 +8,23 @@ import com.project.moneymanager.model.User;
 import com.project.moneymanager.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
+
     @Override
     public UserDto createUser(User user) throws Exception {
         user.setCreateAt(new Timestamp(System.currentTimeMillis()));
+        user.setPassword(bcryptEncoder.encode(user.getPassword()));
         try {
             User savedUser = userRepository.save(user);
             return modelMapper.map(savedUser, UserDto.class);
@@ -46,7 +48,7 @@ public class UserServiceImpl implements UserService{
         User existingUser = userRepository.findById(id).get();
         existingUser.setName(user.getName() != null ? user.getName() : existingUser.getName());
         existingUser.setEmail(user.getEmail() != null ? user.getEmail() : existingUser.getEmail());
-//        existingUser.setPassword(user.getPassword() != null ? bcryptEncoder.encode(user.getPassword()) : existingUser.getPassword());
+        existingUser.setPassword(user.getPassword() != null ? bcryptEncoder.encode(user.getPassword()) : existingUser.getPassword());
         existingUser.setAge(user.getAge() != null ? user.getAge() : existingUser.getAge());
         return modelMapper.map(userRepository.save(existingUser), UserDto.class);
     }
