@@ -34,7 +34,7 @@ public class UserController {
     @DeleteMapping("/user/delete/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) throws Exception {
         userService.deleteUser(id);
-        return new ResponseEntity<HttpStatus>( HttpStatus.NO_CONTENT);
+        return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
     }
 
 
