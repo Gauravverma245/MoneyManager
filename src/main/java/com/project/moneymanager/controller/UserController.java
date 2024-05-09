@@ -17,23 +17,23 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/user/register")
-    public ResponseEntity<UserDto> createUser(@RequestBody User user) throws Exception {
+    public ResponseEntity<UserDto> registerUser(@RequestBody User user) throws Exception {
         return new ResponseEntity<UserDto>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @GetMapping("/user/profile/{id}")
-    public ResponseEntity<UserDto> readUser(@PathVariable Long id) throws Exception {
-        return new ResponseEntity<UserDto>(userService.readUser(id), HttpStatus.OK);
+    @GetMapping("/user/profile")
+    public ResponseEntity<UserDto> getUserProfile() throws Exception {
+        return new ResponseEntity<UserDto>(userService.readUser(), HttpStatus.OK);
     }
 
-    @PutMapping("/user/update/{id}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody User user, @PathVariable Long id) {
-        return new ResponseEntity<UserDto>(userService.updateUser(user, id), HttpStatus.OK);
+    @PutMapping("/user/update")
+    public ResponseEntity<UserDto> updateUserDetails(@RequestBody User user) {
+        return new ResponseEntity<UserDto>(userService.updateUser(user), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/delete/{id}")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) throws Exception {
-        userService.deleteUser(id);
+    @DeleteMapping("/user/deactivate")
+    public ResponseEntity<HttpStatus> deleteUserDetails() throws Exception {
+        userService.deleteUser();
         return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
     }
 

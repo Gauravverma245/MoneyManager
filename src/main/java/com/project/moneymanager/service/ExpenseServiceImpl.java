@@ -11,60 +11,65 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService{
     @Autowired
     private ExpenseRepository expenseRepository;
+
+    @Autowired
+    private UserService userService;
     @Override
     public List<Expense> getAllExpenses() {
-        return expenseRepository.findAll();
+        return expenseRepository.findByUserId(userService.getLoggedInUser().getId());
     }
 
     @Override
-    public Expense getExpenseById(Long Id) throws Exception {
-        Optional<Expense> expense = expenseRepository.findById(Id);
-        return expense.orElseThrow(() -> new ResourceNotFoundException("Expense is not found for id " + Id));
-    }
-
-    @Override
-    public void deleteExpenseById(Long id) throws Exception {
-        if(expenseRepository.existsById(id)){
-            expenseRepository.deleteById(id);
-        }else{
-            throw new ResourceNotFoundException("Expense with id: " + id + " doesn't exist");
+    public Expense getExpenseById(Long id) throws Exception {
+        Expense expense = expenseRepository.findByUserIdAndId(userService.getLoggedInUser().getId(), id);
+        if(expense != null)
+            return expense;
+        else {
+            throw new ResourceNotFoundException("Expense is not found for id " + id);
         }
     }
 
     @Override
+    public void deleteExpenseById(Long id) throws Exception {
+        Expense expense = getExpenseById(id);
+        expenseRepository.delete(expense);
+    }
+
+    @Override
     public Expense addExpense(Expense expense) {
+        expense.setUser(userService.getLoggedInUser());
         expense.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         return expenseRepository.save(expense);
     }
 
     @Override
-    public Expense updateExpenseDetails(Long id, Expense newExpense) throws Exception {
+    public Expense updateExpenseDetails(Long id, Expense expense) throws Exception {
         Expense existingExpense = getExpenseById(id);
-        if(existingExpense != null){
-           return expenseRepository.save(newExpense);
-        }else {
-            throw new ResourceNotFoundException("No Expense exists with id: " + id);
-        }
+        existingExpense.setName(expense.getName() != null ? expense.getName() : existingExpense.getName());
+        existingExpense.setDescription(expense.getDescription() != null ? expense.getDescription() : existingExpense.getDescription());
+        existingExpense.setCategory(expense.getCategory() != null ? expense.getCategory() : existingExpense.getCategory());
+        existingExpense.setDate(expense.getDate() != null ? expense.getDate() : existingExpense.getDate());
+        existingExpense.setAmount(expense.getAmount() != null ? expense.getAmount() : existingExpense.getAmount());
+        return expenseRepository.save(existingExpense);
     }
 
     @Override
     public List<Expense> readByCategory(String category) {
-        return expenseRepository.findByCategory(category);
+        return expenseRepository.findByUserIdAndCategory(userService.getLoggedInUser().getId(), category);
     }
 
     @Override
     public List<Expense> readByName(String name) {
-        return expenseRepository.findByNameContaining(name);
+        return expenseRepository.findByUserIdAndNameContaining(userService.getLoggedInUser().getId(), name);
     }
 
     @Override
     public List<Expense> readByDateRange(Date startDate, Date endDate) {
-        return expenseRepository.findByDateBetween(startDate, endDate);
+        return expenseRepository.findByUserIdAndDateBetween(userService.getLoggedInUser().getId(), startDate, endDate);
     }
 }
