@@ -16,11 +16,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/user/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody User user) throws Exception {
-        return new ResponseEntity<UserDto>(userService.createUser(user), HttpStatus.CREATED);
-    }
-
     @GetMapping("/user/profile")
     public ResponseEntity<UserDto> getUserProfile() throws Exception {
         return new ResponseEntity<UserDto>(userService.readUser(), HttpStatus.OK);
